@@ -64,6 +64,15 @@ function handleSkillRequest($controller, $method, $id) {
         case 'GET':
             $controller->read();
             break;
+        case 'POST':
+            $controller->create();
+            break;
+        case 'PUT':
+            $controller->update($id);
+            break;
+        case 'DELETE':
+            $controller->delete($id);
+            break;
         default:
             http_response_code(405);
     }

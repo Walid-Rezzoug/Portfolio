@@ -1,0 +1,33 @@
+CONFIGURATION XAMPP POUR PORTFOLIO WALID
+
+1. INSTALLATION XAMPP
+   - Télécharger XAMPP depuis https://www.apachefriends.org/
+   - Installer dans C:\xampp (par défaut)
+
+2. DÉMARRER LES SERVICES
+   - Lancer le panneau de contrôle XAMPP
+   - Démarrer Apache et MySQL
+
+3. CONFIGURATION DU PROJET
+   - Copier le dossier "backend" dans C:\xampp\htdocs\portfolio-walid
+   - Créer la base de données :
+     a. Ouvrir phpMyAdmin (http://localhost/phpmyadmin)
+     b. Cliquer sur "Nouvelle base de données"
+     c. Nom : portfolio_walid
+     d. Coller le contenu de database/portfolio.sql
+     e. Exécuter
+
+4. VÉRIFICATION
+   - Test API : http://localhost/portfolio-walid/backend/api/projects
+   - Doit retourner JSON avec les projets
+
+5. PORTS
+   - Frontend React : http://localhost:3000
+   - Backend PHP : http://localhost/portfolio-walid/backend
+   - phpMyAdmin : http://localhost/phpmyadmin
+
+6. CONFIGURATION CORS (si nécessaire)
+   - Modifier httpd.conf dans C:\xampp\apache\conf
+   - Ajouter :
+     Header set Access-Control-Allow-Origin "*"
+     Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"

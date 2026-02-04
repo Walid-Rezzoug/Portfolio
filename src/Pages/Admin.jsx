@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/components.css';
 
 const Admin = () => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const isAuthenticated = sessionStorage.getItem('isAdminAuthenticated');
+        if (isAuthenticated !== 'true') {
+            navigate('/');
+        }
+    }, [navigate]);
+
     const [activeTab, setActiveTab] = useState('dashboard');
     const [projects, setProjects] = useState([]);
     const [messages, setMessages] = useState([]);
@@ -43,6 +53,8 @@ const Admin = () => {
         contactEmail: 'walid.rezzoug@example.com',
         shortDescription: 'Étudiant en L3 Informatique, développeur full-stack et chef de projet.'
     });
+
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     useEffect(() => {
         fetchStats();
@@ -272,20 +284,38 @@ const Admin = () => {
     return (
         <div className="admin-page">
             <div className="admin-header">
-                <h1 className="admin-title">Administration du Portfolio</h1>
-                <p className="admin-subtitle">Gérez votre contenu et vos messages</p>
+                <div className="header-left">
+                    <button className="toggle-sidebar-btn" onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}>
+                        {isSidebarCollapsed ? '➡️' : '⬅️'}
+                    </button>
+                    <div className="breadcrumb">
+                        <span className="breadcrumb-main">Admin</span>
+                        <span className="breadcrumb-sep">/</span>
+                        <span className="breadcrumb-current">
+                            {adminTabs.find(t => t.id === activeTab)?.label}
+                        </span>
+                    </div>
+                </div>
+                <div className="header-right">
+                    <div className="admin-search">
+                        <input type="text" placeholder="Rechercher..." />
+                        <span className="search-icon">🔍</span>
+                    </div>
+                </div>
             </div>
 
-            <div className="admin-container">
-                <aside className="admin-sidebar">
+            <div className={`admin-container ${isSidebarCollapsed ? 'collapsed' : ''}`}>
+                <aside className={`admin-sidebar ${isSidebarCollapsed ? 'mini' : ''}`}>
                     <div className="admin-profile">
                         <div className="profile-avatar">
                             <span>WR</span>
                         </div>
-                        <div className="profile-info">
-                            <h3>Walid Rezzoug</h3>
-                            <p>Administrateur</p>
-                        </div>
+                        {!isSidebarCollapsed && (
+                            <div className="profile-info">
+                                <h3>Walid Rezzoug</h3>
+                                <p>Administrateur</p>
+                            </div>
+                        )}
                     </div>
 
                     <nav className="admin-nav">
@@ -295,9 +325,13 @@ const Admin = () => {
                                     <button
                                         className={`nav-btn ${activeTab === tab.id ? 'active' : ''}`}
                                         onClick={() => setActiveTab(tab.id)}
+                                        title={isSidebarCollapsed ? tab.label : ''}
                                     >
                                         <span className="nav-icon">{tab.icon}</span>
-                                        <span className="nav-label">{tab.label}</span>
+                                        {!isSidebarCollapsed && <span className="nav-label">{tab.label}</span>}
+                                        {tab.id === 'messages' && stats.unreadMessages > 0 && (
+                                            <span className="nav-badge">{stats.unreadMessages}</span>
+                                        )}
                                     </button>
                                 </li>
                             ))}

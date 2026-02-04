@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Hero from '../components/hero';
 import About from '../components/About';
 import Skills from '../components/Skills';
@@ -9,6 +9,19 @@ import Contact from '../components/Contact';
 import '../styles/components.css';
 
 const Home = () => {
+    const navigate = useNavigate();
+
+    const handleAdminClick = (e) => {
+        e.preventDefault();
+        const pin = prompt('Veuillez entrer le code PIN pour accéder à l\'administration :');
+        if (pin === '0792654046') {
+            sessionStorage.setItem('isAdminAuthenticated', 'true');
+            navigate('/admin');
+        } else if (pin !== null) {
+            alert('Code PIN incorrect.');
+        }
+    };
+
     return (
         <div className="app-container">
             {/* Sidebar Navigation */}
@@ -44,10 +57,10 @@ const Home = () => {
                     </nav>
 
                     <div className="admin-section">
-                        <Link to="/admin" className="admin-btn">
+                        <button onClick={handleAdminClick} className="admin-btn">
                             <span>Admin</span>
                             <span>🔧</span>
-                        </Link>
+                        </button>
                     </div>
                 </div>
             </aside>

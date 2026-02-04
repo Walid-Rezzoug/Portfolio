@@ -1427,17 +1427,89 @@ body {
 }
 
 .admin-header {
-    text-align: center;
-    padding: 2rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
     background: var(--bg-light);
-    backdrop-filter: blur(10px);
     border-bottom: 1px solid var(--border-color);
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    box-shadow: var(--shadow-sm);
+    height: 70px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.toggle-sidebar-btn {
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.toggle-sidebar-btn:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.breadcrumb-main {
+    color: var(--text-light);
+}
+
+.breadcrumb-sep {
+    color: var(--border-color);
+}
+
+.breadcrumb-current {
+    color: var(--primary-color);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.admin-search {
+    position: relative;
+    max-width: 300px;
+}
+
+.admin-search input {
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-dark);
+    color: var(--text-color);
+    width: 100%;
+}
+
+.search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
 }
 
 .admin-title {
@@ -1453,9 +1525,13 @@ body {
 
 .admin-container {
     max-width: 100%;
-    margin-top: 10rem;
-    padding: 0 2rem 2rem 300px;
-    /* Décalage pour la sidebar fixe */
+    margin-top: 70px;
+    padding: 2rem 2rem 2rem 300px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-container.collapsed {
+    padding-left: 120px;
 }
 
 .admin-sidebar {
@@ -1463,15 +1539,45 @@ body {
     border-right: 1px solid var(--border-color);
     padding: 2rem 1.5rem;
     position: fixed;
-    top: 8rem;
-    left: 2rem;
+    top: 70px;
+    left: 0;
     width: 260px;
-    height: calc(100vh - 10rem);
-    border-radius: var(--radius-lg);
+    height: calc(100vh - 70px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
     z-index: 100;
+}
+
+.admin-sidebar.mini {
+    width: 80px;
+    padding: 2rem 0.75rem;
+}
+
+.admin-sidebar.mini .admin-profile {
+    justify-content: center;
+    padding-bottom: 1rem;
+}
+
+.admin-sidebar.mini .nav-btn {
+    justify-content: center;
+    padding: 0.75rem;
+}
+
+.nav-badge {
+    background: var(--primary-color);
+    color: white;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: auto;
+}
+
+.admin-sidebar.mini .nav-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    margin: 0;
 }
 
 .admin-profile {

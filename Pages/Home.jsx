@@ -1,0 +1,99 @@
+import React from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import Hero from '../components/hero';
+import About from '../components/About';
+import Skills from '../components/Skills';
+import Projects from '../components/Projects';
+import Experience from '../components/Exprience';
+import Contact from '../components/Contact';
+import '../styles/components.css';
+
+const Home = () => {
+    const navigate = useNavigate();
+
+    const handleAdminClick = (e) => {
+        e.preventDefault();
+        const pin = prompt('Veuillez entrer le code PIN pour accéder à l\'administration :');
+        if (pin === '0792654046') {
+            sessionStorage.setItem('isAdminAuthenticated', 'true');
+            navigate('/admin');
+        } else if (pin !== null) {
+            alert('Code PIN incorrect.');
+        }
+    };
+
+    return (
+        <div className="app-container">
+            {/* Sidebar Navigation */}
+            <aside className="sidebar">
+                <div className="sidebar-content">
+                    <Link to="/" className="logo">WR</Link>
+
+                    <nav className="nav-menu">
+                        <a href="#accueil" className="nav-item">
+                            <i className="fi fi-rr-home nav-icon"></i>
+                            <span>Accueil</span>
+                        </a>
+                        <a href="#apropos" className="nav-item">
+                            <i className="fi fi-rr-user nav-icon"></i>
+                            <span>À Propos</span>
+                        </a>
+                        <a href="#competences" className="nav-item">
+                            <i className="fi fi-rr-bulb nav-icon"></i>
+                            <span>Compétences</span>
+                        </a>
+                        <a href="#projets" className="nav-item">
+                            <i className="fi fi-rr-folder nav-icon"></i>
+                            <span>Projets</span>
+                        </a>
+                        <a href="#experience" className="nav-item">
+                            <i className="fi fi-rr-stats nav-icon"></i>
+                            <span>Expérience</span>
+                        </a>
+                        <a href="#contact" className="nav-item">
+                            <i className="fi fi-rr-envelope nav-icon"></i>
+                            <span>Contact</span>
+                        </a>
+                    </nav>
+
+                    <div className="admin-section">
+                        <button onClick={handleAdminClick} className="admin-btn">
+                            <span>Admin</span>
+                            <span>🔧</span>
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            {/* Main Content */}
+            <main className="main-content">
+                {/* Sections dynamiques via composants */}
+                <div id="accueil">
+                    <Hero />
+                </div>
+
+                <section id="apropos" className="section">
+                    <About />
+                </section>
+
+                <section id="competences" className="section">
+                    <Skills />
+                </section>
+
+                <section id="projets" className="section">
+                    <Projects />
+                </section>
+
+                <section id="experience" className="section">
+                    <Experience />
+                </section>
+
+                <section id="contact" className="section">
+                    <Contact />
+                </section>
+            </main>
+        </div>
+    );
+};
+
+export default Home;

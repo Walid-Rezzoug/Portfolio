@@ -20,7 +20,22 @@ const Admin = () => {
         projects: 0,
         messages: 0,
         skills: 0,
+        experiences: 0,
         unreadMessages: 0
+    });
+
+    // États pour la gestion des expériences
+    const [experiences, setExperiences] = useState([]);
+    const [isExperienceModalOpen, setIsExperienceModalOpen] = useState(false);
+    const [editingExperience, setEditingExperience] = useState(null);
+    const [experienceForm, setExperienceForm] = useState({
+        title: '',
+        company: '',
+        description: '',
+        start_date: '',
+        end_date: '',
+        current_job: false,
+        type: 'work'
     });
 
     // États pour la gestion des projets
@@ -43,7 +58,7 @@ const Admin = () => {
     const [skillForm, setSkillForm] = useState({
         name: '',
         category: 'Frontend',
-        level: 80,
+        level: 5,
         icon: '💻'
     });
 
@@ -57,29 +72,35 @@ const Admin = () => {
     const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     useEffect(() => {
-        fetchStats();
+        if (activeTab === 'dashboard') {
+            fetchProjects();
+            fetchMessages();
+            fetchSkills();
+            fetchExperiences();
+        }
         if (activeTab === 'projects') fetchProjects();
         if (activeTab === 'messages') fetchMessages();
         if (activeTab === 'skills') fetchSkills();
+        if (activeTab === 'experiences') fetchExperiences();
     }, [activeTab]);
 
-    const fetchStats = async () => {
-        try {
-            // Pour l'instant, données de démo
-            setStats({
-                projects: 3,
-                messages: 5,
-                skills: 10,
-                unreadMessages: 2
-            });
-        } catch (error) {
-            console.error('Error fetching stats:', error);
-        }
+    useEffect(() => {
+        setStats({
+            projects: projects.length,
+            messages: messages.length,
+            skills: skills.length,
+            experiences: experiences.length,
+            unreadMessages: messages.filter(m => !m.read_status).length
+        });
+    }, [projects, messages, skills, experiences]);
+
+    const fetchStats = () => {
+        // Cette fonction est maintenant gérée par le useEffect ci-dessus
     };
 
     const fetchProjects = async () => {
         try {
-            const response = await axios.get('http://localhost/backend/projects');
+            const response = await axios.get('http://localhost:8000/projects');
             setProjects(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error('Error fetching projects:', error);
@@ -89,7 +110,7 @@ const Admin = () => {
 
     const fetchMessages = async () => {
         try {
-            const response = await axios.get('http://localhost/backend/contact');
+            const response = await axios.get('http://localhost:8000/contact');
             setMessages(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error('Error fetching messages:', error);
@@ -108,14 +129,24 @@ const Admin = () => {
         }
     };
 
-    const markAsRead = (messageId) => {
-        setMessages(messages.map(msg =>
-            msg.id === messageId ? { ...msg, read_status: true } : msg
-        ));
+    const markAsRead = async (messageId) => {
+        try {
+            await axios.put(`http://localhost:8000/contact/${messageId}`, { read_status: true });
+            fetchMessages();
+        } catch (error) {
+            console.error('Error marking message as read:', error);
+        }
     };
 
-    const deleteMessage = (messageId) => {
-        setMessages(messages.filter(msg => msg.id !== messageId));
+    const deleteMessage = async (messageId) => {
+        if (window.confirm('Supprimer ce message ?')) {
+            try {
+                await axios.delete(`http://localhost:8000/contact/${messageId}`);
+                fetchMessages();
+            } catch (error) {
+                console.error('Error deleting message:', error);
+            }
+        }
     };
 
     // Fonctions de gestion des projets
@@ -150,7 +181,7 @@ const Admin = () => {
     const handleDeleteProject = async (id) => {
         if (window.confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) {
             try {
-                await axios.delete(`http://localhost/backend/projects/${id}`);
+                await axios.delete(`http://localhost:8000/projects/${id}`);
                 fetchProjects();
             } catch (error) {
                 console.error('Error deleting project:', error);
@@ -163,9 +194,9 @@ const Admin = () => {
         e.preventDefault();
         try {
             if (editingProject) {
-                await axios.put(`http://localhost/backend/projects/${editingProject.id}`, projectForm);
+                await axios.put(`http://localhost:8000/projects/${editingProject.id}`, projectForm);
             } else {
-                await axios.post('http://localhost/backend/projects', projectForm);
+                await axios.post('http://localhost:8000/projects', projectForm);
             }
             setIsProjectModalOpen(false);
             fetchProjects();
@@ -185,7 +216,7 @@ const Admin = () => {
 
     const fetchSkills = async () => {
         try {
-            const response = await axios.get('http://localhost/backend/skills');
+            const response = await axios.get('http://localhost:8000/skills');
             setSkills(Array.isArray(response.data) ? response.data : []);
         } catch (error) {
             console.error('Error fetching skills:', error);
@@ -199,7 +230,7 @@ const Admin = () => {
         setSkillForm({
             name: '',
             category: 'Frontend',
-            level: 80,
+            level: 5,
             icon: '💻'
         });
         setIsSkillModalOpen(true);
@@ -219,7 +250,7 @@ const Admin = () => {
     const handleDeleteSkill = async (id) => {
         if (window.confirm('Supprimer cette compétence ?')) {
             try {
-                await axios.delete(`http://localhost/backend/skills/${id}`);
+                await axios.delete(`http://localhost:8000/skills/${id}`);
                 fetchSkills();
             } catch (error) {
                 console.error('Error deleting skill:', error);
@@ -232,9 +263,9 @@ const Admin = () => {
         e.preventDefault();
         try {
             if (editingSkill) {
-                await axios.put(`http://localhost/backend/skills/${editingSkill.id}`, skillForm);
+                await axios.put(`http://localhost:8000/skills/${editingSkill.id}`, skillForm);
             } else {
-                await axios.post('http://localhost/backend/skills', skillForm);
+                await axios.post('http://localhost:8000/skills', skillForm);
             }
             setIsSkillModalOpen(false);
             fetchSkills();
@@ -249,6 +280,80 @@ const Admin = () => {
         setSkillForm(prev => ({
             ...prev,
             [name]: name === 'level' ? parseInt(value) : value
+        }));
+    };
+
+    const fetchExperiences = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/experiences');
+            setExperiences(Array.isArray(response.data) ? response.data : []);
+        } catch (error) {
+            console.error('Error fetching experiences:', error);
+            setExperiences([]);
+        }
+    };
+
+    const openAddExperienceModal = () => {
+        setEditingExperience(null);
+        setExperienceForm({
+            title: '',
+            company: '',
+            description: '',
+            start_date: '',
+            end_date: '',
+            current_job: false,
+            type: 'work'
+        });
+        setIsExperienceModalOpen(true);
+    };
+
+    const openEditExperienceModal = (exp) => {
+        setEditingExperience(exp);
+        setExperienceForm({
+            title: exp.title,
+            company: exp.company,
+            description: exp.description,
+            start_date: exp.start_date,
+            end_date: exp.end_date || '',
+            current_job: exp.current_job || false,
+            type: exp.type
+        });
+        setIsExperienceModalOpen(true);
+    };
+
+    const handleDeleteExperience = async (id) => {
+        if (window.confirm('Supprimer cette expérience ?')) {
+            try {
+                await axios.delete(`http://localhost:8000/experiences/${id}`);
+                fetchExperiences();
+            } catch (error) {
+                console.error('Error deleting experience:', error);
+                alert('Erreur lors de la suppression.');
+            }
+        }
+    };
+
+    const handleSaveExperience = async (e) => {
+        e.preventDefault();
+        try {
+            if (editingExperience) {
+                await axios.put(`http://localhost:8000/experiences/${editingExperience.id}`, experienceForm);
+            } else {
+                await axios.post('http://localhost:8000/experiences', experienceForm);
+            }
+            setIsExperienceModalOpen(false);
+            fetchExperiences();
+        } catch (error) {
+            console.error('Error saving experience:', error);
+            alert('Erreur lors de l\'enregistrement.');
+        }
+    };
+
+    const handleExperienceFormChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setExperienceForm(prev => ({
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value
         }));
     };
 
@@ -273,12 +378,13 @@ const Admin = () => {
     };
 
     const adminTabs = [
-        { id: 'dashboard', label: 'Tableau de bord', icon: '📊' },
-        { id: 'projects', label: 'Projets', icon: '📁' },
-        { id: 'messages', label: 'Messages', icon: '✉️' },
-        { id: 'skills', label: 'Compétences', icon: '💡' },
-        { id: 'stats', label: 'Statistiques', icon: '📈' },
-        { id: 'settings', label: 'Paramètres', icon: '⚙️' }
+        { id: 'dashboard', label: 'Tableau de bord', icon: <i className="fi fi-rr-apps"></i> },
+        { id: 'projects', label: 'Projets', icon: <i className="fi fi-rr-folder"></i> },
+        { id: 'experiences', label: 'Expériences', icon: <i className="fi fi-rr-briefcase"></i> },
+        { id: 'messages', label: 'Messages', icon: <i className="fi fi-rr-envelope"></i> },
+        { id: 'skills', label: 'Compétences', icon: <i className="fi fi-rr-bulb"></i> },
+        { id: 'stats', label: 'Statistiques', icon: <i className="fi fi-rr-stats"></i> },
+        { id: 'settings', label: 'Paramètres', icon: <i className="fi fi-rr-settings"></i> }
     ];
 
     return (
@@ -338,7 +444,7 @@ const Admin = () => {
                             <li className="nav-separator"></li>
                             <li>
                                 <a href="/" className="nav-btn logout">
-                                    <span className="nav-icon">🏠</span>
+                                    <span className="nav-icon"><i className="fi fi-rr-home"></i></span>
                                     <span className="nav-label">Retour au site</span>
                                 </a>
                             </li>
@@ -539,7 +645,7 @@ const Admin = () => {
                             </div>
 
                             <div className="skills-admin-grid">
-                                {['Frontend', 'Backend', 'Outils', 'Soft Skills'].map(category => (
+                                {['Frontend', 'Backend', 'Database', 'Tools', 'Soft Skills'].map(category => (
                                     <div key={category} className="skill-category-admin">
                                         <h3>{category}</h3>
                                         <div className="skills-list-admin">
@@ -550,7 +656,7 @@ const Admin = () => {
                                                         <div className="skill-info">
                                                             <span className="skill-icon">{skill.icon}</span>
                                                             <span className="skill-name">{skill.name}</span>
-                                                            <span className="skill-level">{skill.level}%</span>
+                                                            <span className="skill-level">{skill.level}/5</span>
                                                         </div>
                                                         <div className="skill-actions">
                                                             <button className="icon-btn" onClick={() => openEditSkillModal(skill)}>✏️</button>
@@ -561,6 +667,46 @@ const Admin = () => {
                                         </div>
                                     </div>
                                 ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'experiences' && (
+                        <div className="experiences-admin">
+                            <div className="content-header">
+                                <h2 className="content-title">Gestion des Expériences</h2>
+                                <button className="add-btn" onClick={openAddExperienceModal}>
+                                    <span className="btn-icon">💼</span>
+                                    Ajouter une expérience
+                                </button>
+                            </div>
+
+                            <div className="experiences-list-admin">
+                                {Array.isArray(experiences) && experiences.length > 0 ? (
+                                    experiences.map(exp => (
+                                        <div key={exp.id} className="experience-admin-card">
+                                            <div className="experience-admin-header">
+                                                <div className="exp-info">
+                                                    <span className="exp-type-icon">
+                                                        {exp.type === 'education' ? '🎓' : exp.type === 'project_lead' ? '👨‍💼' : '💼'}
+                                                    </span>
+                                                    <h3>{exp.title}</h3>
+                                                </div>
+                                                <div className="experience-actions">
+                                                    <button className="action-btn small" onClick={() => openEditExperienceModal(exp)}>✏️</button>
+                                                    <button className="action-btn small delete" onClick={() => handleDeleteExperience(exp.id)}>🗑️</button>
+                                                </div>
+                                            </div>
+                                            <p className="exp-company"><strong>{exp.company}</strong></p>
+                                            <p className="exp-dates">
+                                                {new Date(exp.start_date).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })} -
+                                                {exp.current_job ? ' Présent' : new Date(exp.end_date).toLocaleDateString('fr-FR', { month: 'short', year: 'numeric' })}
+                                            </p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="no-data">Aucune expérience trouvée.</p>
+                                )}
                             </div>
                         </div>
                     )}
@@ -781,7 +927,8 @@ const Admin = () => {
                                     >
                                         <option value="Frontend">Frontend</option>
                                         <option value="Backend">Backend</option>
-                                        <option value="Outils">Outils</option>
+                                        <option value="Database">Database</option>
+                                        <option value="Tools">Tools</option>
                                         <option value="Soft Skills">Soft Skills</option>
                                     </select>
                                 </div>
@@ -796,18 +943,111 @@ const Admin = () => {
                                 </div>
                             </div>
                             <div className="form-group">
-                                <label>Niveau ({skillForm.level}%)</label>
+                                <label>Niveau ({skillForm.level}/5)</label>
                                 <input
                                     type="range"
                                     name="level"
-                                    min="0"
-                                    max="100"
+                                    min="1"
+                                    max="5"
                                     value={skillForm.level}
                                     onChange={handleSkillFormChange}
                                 />
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn-secondary" onClick={() => setIsSkillModalOpen(false)}>Annuler</button>
+                                <button type="submit" className="btn-primary">Enregistrer</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal d'Expérience */}
+            {isExperienceModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h2>{editingExperience ? 'Modifier l\'expérience' : 'Ajouter une expérience'}</h2>
+                            <button className="close-btn" onClick={() => setIsExperienceModalOpen(false)}>×</button>
+                        </div>
+                        <form onSubmit={handleSaveExperience} className="modal-form">
+                            <div className="form-group">
+                                <label>Titre / Poste</label>
+                                <input
+                                    type="text"
+                                    name="title"
+                                    value={experienceForm.title}
+                                    onChange={handleExperienceFormChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Entreprise / Institution</label>
+                                <input
+                                    type="text"
+                                    name="company"
+                                    value={experienceForm.company}
+                                    onChange={handleExperienceFormChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Type</label>
+                                <select
+                                    name="type"
+                                    value={experienceForm.type}
+                                    onChange={handleExperienceFormChange}
+                                    required
+                                >
+                                    <option value="work">Expérience Pro</option>
+                                    <option value="education">Éducation</option>
+                                    <option value="project_lead">Leadership Projet</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Description</label>
+                                <textarea
+                                    name="description"
+                                    value={experienceForm.description}
+                                    onChange={handleExperienceFormChange}
+                                    rows="4"
+                                />
+                            </div>
+                            <div className="form-row">
+                                <div className="form-group">
+                                    <label>Date de début</label>
+                                    <input
+                                        type="date"
+                                        name="start_date"
+                                        value={experienceForm.start_date}
+                                        onChange={handleExperienceFormChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label>Date de fin</label>
+                                    <input
+                                        type="date"
+                                        name="end_date"
+                                        value={experienceForm.end_date}
+                                        onChange={handleExperienceFormChange}
+                                        disabled={experienceForm.current_job}
+                                    />
+                                </div>
+                            </div>
+                            <div className="form-group checkbox">
+                                <label>
+                                    <input
+                                        type="checkbox"
+                                        name="current_job"
+                                        checked={experienceForm.current_job}
+                                        onChange={handleExperienceFormChange}
+                                    />
+                                    Poste actuel
+                                </label>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn-secondary" onClick={() => setIsExperienceModalOpen(false)}>Annuler</button>
                                 <button type="submit" className="btn-primary">Enregistrer</button>
                             </div>
                         </form>

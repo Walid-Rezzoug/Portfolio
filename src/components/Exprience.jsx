@@ -12,7 +12,7 @@ const Experience = () => {
 
     const fetchExperiences = async () => {
         try {
-            const response = await axios.get('http://localhost/backend/experiences');
+            const response = await axios.get('http://localhost:8000/experiences');
             setExperiences(response.data);
         } catch (error) {
             console.error('Error fetching experiences:', error);

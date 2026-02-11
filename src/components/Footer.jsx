@@ -14,9 +14,9 @@ const Footer = () => {
     ];
 
     const socialLinks = [
-        { name: 'GitHub', icon: '🐙', url: 'https://github.com/Walid-Rezzoug' },
-        { name: 'LinkedIn', icon: '💼', url: 'https://www.linkedin.com/in/walid-rezzoug-22475a336/' },
-        { name: 'Email', icon: '📧', url: 'mailto:walidouu200@gmail.com' }
+        { name: 'GitHub', icon: <i className="fi fi-brands-github"></i>, url: 'https://github.com/Walid-Rezzoug' },
+        { name: 'LinkedIn', icon: <i className="fi fi-brands-linkedin"></i>, url: 'https://www.linkedin.com/in/walid-rezzoug-22475a336/' },
+        { name: 'Email', icon: <i className="fi fi-rr-envelope"></i>, url: 'mailto:walidouu200@gmail.com' }
     ];
 
     const scrollToTop = () => {

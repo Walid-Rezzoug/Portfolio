@@ -74,22 +74,26 @@ const Header = () => {
 
                 <div className="header-actions">
                     <a
-                        href="https://github.com/walid"
+                        href="https://github.com/Walid-Rezzoug"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="social-link"
                         aria-label="GitHub"
                     >
-                        <span className="social-icon">🐙</span>
+                        <span className="social-icon">
+                            <i className="fi fi-brands-github"></i>
+                        </span>
                     </a>
                     <a
-                        href="https://linkedin.com/in/walid"
+                        href="https://www.linkedin.com/in/walid-rezzoug-22475a336"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="social-link"
                         aria-label="LinkedIn"
                     >
-                        <span className="social-icon">💼</span>
+                        <span className="social-icon">
+                            <i className="fi fi-brands-linkedin"></i>
+                        </span>
                     </a>
                 </div>
             </div>

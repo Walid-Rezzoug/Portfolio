@@ -31,27 +31,27 @@ const Home = () => {
 
                     <nav className="nav-menu">
                         <a href="#accueil" className="nav-item">
-                            <span className="nav-icon">🏠</span>
+                            <i className="fi fi-rr-home nav-icon"></i>
                             <span>Accueil</span>
                         </a>
                         <a href="#apropos" className="nav-item">
-                            <span className="nav-icon">👤</span>
+                            <i className="fi fi-rr-user nav-icon"></i>
                             <span>À Propos</span>
                         </a>
                         <a href="#competences" className="nav-item">
-                            <span className="nav-icon">💡</span>
+                            <i className="fi fi-rr-bulb nav-icon"></i>
                             <span>Compétences</span>
                         </a>
                         <a href="#projets" className="nav-item">
-                            <span className="nav-icon">📁</span>
+                            <i className="fi fi-rr-folder nav-icon"></i>
                             <span>Projets</span>
                         </a>
                         <a href="#experience" className="nav-item">
-                            <span className="nav-icon">📊</span>
+                            <i className="fi fi-rr-stats nav-icon"></i>
                             <span>Expérience</span>
                         </a>
                         <a href="#contact" className="nav-item">
-                            <span className="nav-icon">✉️</span>
+                            <i className="fi fi-rr-envelope nav-icon"></i>
                             <span>Contact</span>
                         </a>
                     </nav>

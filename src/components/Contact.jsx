@@ -26,7 +26,7 @@ const Contact = () => {
         setStatus({ type: '', message: '' });
 
         try {
-            const response = await axios.post('http://localhost/backend/contact', formData);
+            const response = await axios.post('http://localhost:8000/contact', formData);
 
             if (response.status === 200 || response.status === 201) {
                 setStatus({
@@ -71,13 +71,21 @@ const Contact = () => {
             link: null
         },
         {
-            icon: '💼',
+            icon: (
+                <span className="social-icon">
+                    <i className="fi fi-brands-linkedin"></i>
+                </span>
+            ),
             title: 'LinkedIn',
             value: 'Linkedin',
             link: 'https://www.linkedin.com/in/walid-rezzoug-22475a336/'
         },
         {
-            icon: '🐙',
+            icon: (
+                <span className="social-icon">
+                    <i className="fi fi-brands-github"></i>
+                </span>
+            ),
             title: 'GitHub',
             value: 'Github',
             link: 'https://github.com/Walid-Rezzoug'
@@ -103,7 +111,7 @@ const Contact = () => {
                             {contactInfo.map((info, index) => (
                                 <div key={index} className="contact-info-card">
                                     <div className="contact-info-icon">
-                                        <span>{info.icon}</span>
+                                        {typeof info.icon === 'string' ? <span>{info.icon}</span> : info.icon}
                                     </div>
                                     <div className="contact-info-content">
                                         <h4>{info.title}</h4>
@@ -221,9 +229,7 @@ const Contact = () => {
                                 )}
                             </button>
 
-                            <p className="form-note">
-                                * Champs obligatoires
-                            </p>
+                           
                         </form>
                     </div>
                 </div>

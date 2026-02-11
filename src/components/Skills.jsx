@@ -12,7 +12,7 @@ const Skills = () => {
 
     const fetchSkills = async () => {
         try {
-            const response = await axios.get('http://localhost/backend/skills');
+            const response = await axios.get('http://localhost:8000/skills');
             setSkills(response.data);
 
             // Extraire les catégories uniques

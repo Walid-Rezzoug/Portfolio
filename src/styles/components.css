@@ -2146,11 +2146,48 @@ body {
     .about-content,
     .contact-content {
         grid-template-columns: 1fr;
-        gap: 2rem;
+        gap: 3rem;
+    }
+
+    .about-text {
+        text-align: center;
+        order: 2;
+    }
+
+    .about-image {
+        order: 1;
+        margin-bottom: 2rem;
+    }
+
+    .profile-image-placeholder {
+        width: 280px;
+        height: 280px;
+        margin: 0 auto;
+    }
+
+    .profile-initials {
+        font-size: 3rem;
+    }
+
+    .about-details {
+        text-align: left;
     }
 
     .about-stats {
         grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .stat {
+        padding: 0.75rem;
+    }
+
+    .stat-number {
+        font-size: 1.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
     }
 
     .projects-grid {

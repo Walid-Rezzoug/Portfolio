@@ -38,5 +38,63 @@ class ExperienceController {
             echo json_encode([]);
         }
     }
+
+    public function create() {
+        $data = json_decode(file_get_contents("php://input"));
+
+        if(!empty($data->title) && !empty($data->company) && !empty($data->type)) {
+            $this->experience->title = $data->title;
+            $this->experience->company = $data->company;
+            $this->experience->description = $data->description;
+            $this->experience->start_date = $data->start_date;
+            $this->experience->end_date = $data->end_date;
+            $this->experience->current_job = $data->current_job ? 1 : 0;
+            $this->experience->type = $data->type;
+
+            if($this->experience->create()) {
+                http_response_code(201);
+                echo json_encode(["message" => "Experience created."]);
+            } else {
+                http_response_code(503);
+                echo json_encode(["message" => "Unable to create experience."]);
+            }
+        } else {
+            http_response_code(400);
+            echo json_encode(["message" => "Incomplete data."]);
+        }
+    }
+
+    public function update($id) {
+        $data = json_decode(file_get_contents("php://input"));
+        
+        $this->experience->id = $id;
+        $this->experience->title = $data->title;
+        $this->experience->company = $data->company;
+        $this->experience->description = $data->description;
+        $this->experience->start_date = $data->start_date;
+        $this->experience->end_date = $data->end_date;
+        $this->experience->current_job = $data->current_job ? 1 : 0;
+        $this->experience->type = $data->type;
+
+        if($this->experience->update()) {
+            http_response_code(200);
+            echo json_encode(["message" => "Experience updated."]);
+        } else {
+            http_response_code(503);
+            echo json_encode(["message" => "Unable to update experience."]);
+        }
+    }
+
+    public function delete($id) {
+        $this->experience->id = $id;
+
+        if($this->experience->delete()) {
+            http_response_code(200);
+            echo json_encode(["message" => "Experience deleted."]);
+        } else {
+            http_response_code(503);
+            echo json_encode(["message" => "Unable to delete experience."]);
+        }
+    }
 }
 ?>

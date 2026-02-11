@@ -17,11 +17,18 @@ $requestMethod = $_SERVER["REQUEST_METHOD"];
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri_parts = explode('/', trim($uri, '/'));
 
-// Si le backend est dans un sous-dossier, on l'ignore pour trouver l'endpoint
-// On cherche l'index qui suit "backend" ou on prend le dernier segment
+// Modification de la logique de routing pour gérer correctement les URLs type /resource/id
 $key = array_search('backend', $uri_parts);
-$endpoint = ($key !== false && isset($uri_parts[$key + 1])) ? $uri_parts[$key + 1] : end($uri_parts);
-$id = ($key !== false && isset($uri_parts[$key + 2])) ? $uri_parts[$key + 2] : null;
+
+if ($key !== false) {
+    // Si "backend" est trouvé dans l'URL (cas XAMPP classique : localhost/backend/...)
+    $endpoint = isset($uri_parts[$key + 1]) ? $uri_parts[$key + 1] : null;
+    $id = isset($uri_parts[$key + 2]) ? $uri_parts[$key + 2] : null;
+} else {
+    // Si "backend" n'est pas trouvé (cas serveur dédié : localhost:8000/...)
+    $endpoint = isset($uri_parts[0]) ? $uri_parts[0] : null;
+    $id = isset($uri_parts[1]) ? $uri_parts[1] : null;
+}
 
 // Route les requêtes API
 routeRequest($requestMethod, $endpoint, $id);

@@ -42,5 +42,26 @@ class Contact {
         $stmt->execute();
         return $stmt;
     }
+
+    public function update() {
+        $query = "UPDATE " . $this->table_name . " SET read_status=:read_status WHERE id=:id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":read_status", $this->read_status);
+        $stmt->bindParam(":id", $this->id);
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
+
+    public function delete() {
+        $query = "DELETE FROM " . $this->table_name . " WHERE id=:id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(":id", $this->id);
+        if ($stmt->execute()) {
+            return true;
+        }
+        return false;
+    }
 }
 ?>

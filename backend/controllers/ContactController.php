@@ -59,5 +59,30 @@ class ContactController {
             echo json_encode([]);
         }
     }
+
+    public function update($id) {
+        $data = json_decode(file_get_contents("php://input"));
+        $this->contact->id = $id;
+        $this->contact->read_status = $data->read_status ? 1 : 0;
+
+        if ($this->contact->update()) {
+            http_response_code(200);
+            echo json_encode(["message" => "Message mis à jour."]);
+        } else {
+            http_response_code(503);
+            echo json_encode(["message" => "Impossible de mettre à jour le message."]);
+        }
+    }
+
+    public function delete($id) {
+        $this->contact->id = $id;
+        if ($this->contact->delete()) {
+            http_response_code(200);
+            echo json_encode(["message" => "Message supprimé."]);
+        } else {
+            http_response_code(503);
+            echo json_encode(["message" => "Impossible de supprimer le message."]);
+        }
+    }
 }
 ?>

@@ -50,9 +50,6 @@ class Skill {
 
         $this->id = htmlspecialchars(strip_tags($this->id));
         $this->name = htmlspecialchars(strip_tags($this->name));
-        $this->category = htmlspecialchars(strip_tags($this->category));
-        $this->level = htmlspecialchars(strip_tags($this->level));
-        $this->icon = htmlspecialchars(strip_tags($this->icon));
 
         $stmt->bindParam(":id", $this->id);
         $stmt->bindParam(":name", $this->name);
